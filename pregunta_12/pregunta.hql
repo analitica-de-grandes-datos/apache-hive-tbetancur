@@ -34,11 +34,9 @@ LOAD DATA LOCAL INPATH 'data.tsv' INTO TABLE t0;
 */
 INSERT OVERWRITE DIRECTORY 'output'
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
-select letra, unal.key, count(1) 
-from(
-select letra, c3
-from t0
-lateral view explode(c2) t0 as letra
-order by letra) w
-lateral view explode(c3) unal AS key, value
-group by letra, unal.key;
+LINES TERMINATED BY '\n'
+
+SELECT letra, key, COUNT(*) FROM t0
+LATERAL VIEW EXPLODE(c2) t0 AS letra
+LATERAL VIEW EXPLODE(c3) t0 AS key, value
+GROUP BY letra, key;
